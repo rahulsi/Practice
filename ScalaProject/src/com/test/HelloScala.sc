@@ -5,8 +5,8 @@ import org.w3c.dom.ranges.Range
 object HelloScala {
   println("Welcome to the Scala worksheet")       //> Welcome to the Scala worksheet
 
-  /*
-  def lastElement(list: List[Any]): Any =
+
+  def lastElement(list: List[Any]): Any = //TODO: brackets should succeed =
     {
       list match {
         case Nil => None
@@ -22,13 +22,13 @@ object HelloScala {
   lastElement(List('a', 'b', 'c', 'd'))
   lastElement(List("abc", "def", "ghi"))
 
-  def penUltimateElement(list: List[Any]): Any =
+  def penultimateElement(list: List[Any]): Any =
     {
       list match {
         case Nil => None
         case x :: Nil => None
         case x :: y :: Nil => x
-        case x :: xs => lastElement(xs)
+        case x :: xs => penUltimateElement(xs)  //TODO : penultimate
       }
     }
   penUltimateElement(List(1, 2, 3, 4, 5))
@@ -81,7 +81,7 @@ object HelloScala {
     {
       def expandNum(n: Int, x: T): List[T] =
         {
-          if (n == 1) List(x) else x :: expandNum(n - 1, x)
+          if (n == 1) List(x) else x :: expandNum(n - 1, x)  // TODO : check if with return None we can use List[T] in return type
         }
       list match {
         case Nil => Nil;
@@ -101,16 +101,15 @@ object HelloScala {
       list match {
         case Nil => Nil
         case x :: xs => if (cur >= low && cur <= high) x :: sliceCur(cur + 1, low, high, xs)
-        else if (cur < high) sliceCur(cur + 1, low, high, xs)
-        else Nil
+        else  sliceCur(cur + 1, low, high, xs)
       }
     }
     sliceCur(0, low, high, list)
   }
-	slice(2,5,List())
+	slice(2,5,List())                                                 // TODO: second parameter should be length
 	slice(2,5,List(0,1,2,3,4,5,6,7,8))
 	slice(0,8,List("0","1","2","3","4","5","6","7","8"))
-*/
+
 
   def listPrimesinRange(low: Int, high: Int): List[Int] = {
 
@@ -135,7 +134,9 @@ object HelloScala {
   listPrimesinRange(1, 100)                       //> res0: List[Int] = List(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 
                                                   //| 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97)
 
-  def findSum(n: Int): Int = {
+  def findSum(n: Int, three, five): Int = {       //TODO : re write this using functions
+    def isMultiple3()
+    //TODO : use filter
     def findSumRes(n: Int): Int = {
       n match {
         case 0 => 0

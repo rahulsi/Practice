@@ -3,7 +3,7 @@ package com.test
 object MarsRover {
   println("Welcome to the Scala worksheet")       //> Welcome to the Scala worksheet
 
-  class Direction(dir: Char) {
+  class Direction(dir: Char) {                    //TODO : use Enum
     def CH: Char = dir;
     def rotate(ch: Char): Direction = {
       if (ch.toUpper == 'R') {
