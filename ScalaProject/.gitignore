@@ -1,4 +1,1 @@
-.settings/*
-.worksheet/*
-*.class
-*.log
+/bin/

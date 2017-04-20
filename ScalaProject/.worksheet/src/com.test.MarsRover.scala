@@ -1,7 +1,7 @@
 package com.test
 
-object MarsRover {
-  println("Welcome to the Scala worksheet")       //> Welcome to the Scala worksheet
+object MarsRover {;import org.scalaide.worksheet.runtime.library.WorksheetSupport._; def main(args: Array[String])=$execute{;$skip(80); 
+  println("Welcome to the Scala worksheet")
 
   class Direction(dir: Char) {                    //TODO : use Enum
     def CH: Char = dir;
@@ -58,31 +58,8 @@ object MarsRover {
       }
       curState
     }
-  }
-  val rover1: MarsRoverNavigation = new MarsRoverNavigation(5, 5)
-                                                  //> rover1  : com.test.MarsRover.MarsRoverNavigation = com.test.MarsRover$$anon
-                                                  //| fun$main$1$MarsRoverNavigation$1@3796751b
-  rover1.playOrders(1, 2, 'N', "LMLMLMLMM").toString()
-                                                  //> 1 2 N L
-                                                  //| 1 2 W M
-                                                  //| 1 1 W L
-                                                  //| 1 1 S M
-                                                  //| 0 1 S L
-                                                  //| 0 1 E M
-                                                  //| 0 2 E L
-                                                  //| 0 2 N M
-                                                  //| 1 2 N M
-                                                  //| res0: String = 2 2 N
-  rover1.playOrders(3, 3, 'E', "MMRMMRMRRM").toString()
-                                                  //> 3 3 E M
-                                                  //| 3 4 E M
-                                                  //| 3 5 E R
-                                                  //| 3 5 S M
-                                                  //| 2 5 S M
-                                                  //| 1 5 S R
-                                                  //| 1 5 W M
-                                                  //| 1 4 W R
-                                                  //| 1 4 N R
-                                                  //| 1 4 E M
-                                                  //| res1: String = 1 5 E
+  };$skip(2045); 
+  val rover1: MarsRoverNavigation = new MarsRoverNavigation(5, 5);System.out.println("""rover1  : com.test.MarsRover.MarsRoverNavigation = """ + $show(rover1 ));$skip(55); val res$0 = 
+  rover1.playOrders(1, 2, 'N', "LMLMLMLMM").toString();System.out.println("""res0: String = """ + $show(res$0));$skip(56); val res$1 = 
+  rover1.playOrders(3, 3, 'E', "MMRMMRMRRM").toString();System.out.println("""res1: String = """ + $show(res$1))}
 }
