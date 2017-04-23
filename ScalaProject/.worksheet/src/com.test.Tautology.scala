@@ -2,8 +2,8 @@ package com.test
 
 import java.util.Stack
 
-object Tautology {;import org.scalaide.worksheet.runtime.library.WorksheetSupport._; def main(args: Array[String])=$execute{;$skip(102); 
-  println("WelcometotheScalaworksheet")
+object Tautology {;import org.scalaide.worksheet.runtime.library.WorksheetSupport._; def main(args: Array[String])=$execute{;$skip(106); 
+  println("Welcome to the Scala worksheet")
 
   trait Expression {
     def calculate(valMap: Map[String, Boolean]): Boolean
@@ -32,9 +32,12 @@ object Tautology {;import org.scalaide.worksheet.runtime.library.WorksheetSuppor
   }
 
   class VariableTerm(str: String) extends Expression {
-    def calculate(valMap: Map[String, Boolean]): Boolean = valMap.getOrElse(str, false)
+    def calculate(valMap: Map[String, Boolean]): Boolean = {
+      //println(this+" -> "+valMap.getOrElse(str, false))
+      valMap.getOrElse(str, false)
+    }
     override def toString(): String = str
-  };$skip(3213); 
+  };$skip(3285); 
 
   /*
 classTrueTermextendsExpression{
@@ -104,8 +107,35 @@ defcalculate(valMap:Map[String,Boolean]):Boolean=false
       return exp
     }
     return exp
-  };System.out.println("""parseString: (expr: String, start: Int, end: Int)com.test.Tautology.Expression""");$skip(23); 
-  val str = "a|(b|!c)";System.out.println("""str  : String = """ + $show(str ));$skip(50); 
-  val exp = parseString(str, 0, str.length() - 1);System.out.println("""exp  : com.test.Tautology.Expression = """ + $show(exp ))}
+  };System.out.println("""parseString: (expr: String, start: Int, end: Int)com.test.Tautology.Expression""");$skip(570); 
+
+  def isTautology(exp: Expression, eleSet: Set[String]): Boolean = {
+
+    for (x <- 0 to Math.pow(2, eleSet.size).toInt - 1) {
+      var valMap: Map[String, Boolean] = Map()
+      var value: Boolean = false
+      var count = 0
+      for (ele <- eleSet) {
+        value = if ((x & 1 << count) == 0) false else true
+        //println(ele + " " + value)
+        valMap += (ele -> value)
+        count += 1
+      }
+      //println(valMap)
+      //println(exp + " " + exp.calculate(valMap))
+      if (exp.calculate(valMap) == false) return false
+    }
+    return true
+  };System.out.println("""isTautology: (exp: com.test.Tautology.Expression, eleSet: Set[String])Boolean""");$skip(129); 
+
+  val input = Array("(a|((b|c)|(!d)))", "(!a | (a & a))", "(!a | (b & !a))", "(!a | a)", "((a & (!b | b)) | (!a & (!b | b)))");System.out.println("""input  : Array[String] = """ + $show(input ));$skip(295); 
+
+  for (spacestr <- input) {
+    val str = spacestr.replaceAll(" ", "");
+    val exp = parseString(str, 0, str.length() - 1)
+    val eleSet = str.split(Array('(', ')', '&', '|', '!')).filter { x => x.trim().length() > 0 }.toSet
+    println("output=" + str + " " + isTautology(exp, eleSet))
+  }}
+  //assume
 
 }

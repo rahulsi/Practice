@@ -3,7 +3,7 @@ package com.test
 import java.util.Stack
 
 object Tautology {
-  println("WelcometotheScalaworksheet")           //> WelcometotheScalaworksheet
+  println("Welcome to the Scala worksheet")       //> Welcome to the Scala worksheet
 
   trait Expression {
     def calculate(valMap: Map[String, Boolean]): Boolean
@@ -32,7 +32,10 @@ object Tautology {
   }
 
   class VariableTerm(str: String) extends Expression {
-    def calculate(valMap: Map[String, Boolean]): Boolean = valMap.getOrElse(str, false)
+    def calculate(valMap: Map[String, Boolean]): Boolean = {
+      //println(this+" -> "+valMap.getOrElse(str, false))
+      valMap.getOrElse(str, false)
+    }
     override def toString(): String = str
   }
 
@@ -106,7 +109,41 @@ defcalculate(valMap:Map[String,Boolean]):Boolean=false
     return exp
   }                                               //> parseString: (expr: String, start: Int, end: Int)com.test.Tautology.Express
                                                   //| ion
-  val str = "a|(b|!c)"                            //> str  : String = a|(b|!c)
-  val exp = parseString(str, 0, str.length() - 1) //> exp  : com.test.Tautology.Expression = (a|(b|!c))
+
+  def isTautology(exp: Expression, eleSet: Set[String]): Boolean = {
+
+    for (x <- 0 to Math.pow(2, eleSet.size).toInt - 1) {
+      var valMap: Map[String, Boolean] = Map()
+      var value: Boolean = false
+      var count = 0
+      for (ele <- eleSet) {
+        value = if ((x & 1 << count) == 0) false else true
+        //println(ele + " " + value)
+        valMap += (ele -> value)
+        count += 1
+      }
+      //println(valMap)
+      //println(exp + " " + exp.calculate(valMap))
+      if (exp.calculate(valMap) == false) return false
+    }
+    return true
+  }                                               //> isTautology: (exp: com.test.Tautology.Expression, eleSet: Set[String])Boole
+                                                  //| an
+
+  val input = Array("(a|((b|c)|(!d)))", "(!a | (a & a))", "(!a | (b & !a))", "(!a | a)", "((a & (!b | b)) | (!a & (!b | b)))")
+                                                  //> input  : Array[String] = Array((a|((b|c)|(!d))), (!a | (a & a)), (!a | (b &
+                                                  //|  !a)), (!a | a), ((a & (!b | b)) | (!a & (!b | b))))
+
+  for (spacestr <- input) {
+    val str = spacestr.replaceAll(" ", "");
+    val exp = parseString(str, 0, str.length() - 1)
+    val eleSet = str.split(Array('(', ')', '&', '|', '!')).filter { x => x.trim().length() > 0 }.toSet
+    println("output=" + str + " " + isTautology(exp, eleSet))
+  }                                               //> output=(a|((b|c)|(!d))) false
+                                                  //| output=(!a|(a&a)) true
+                                                  //| output=(!a|(b&!a)) false
+                                                  //| output=(!a|a) true
+                                                  //| output=((a&(!b|b))|(!a&(!b|b))) true
+  //assume
 
 }
