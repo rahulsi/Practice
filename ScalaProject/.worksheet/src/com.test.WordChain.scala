@@ -2,9 +2,9 @@ package com.test
 import scala.io.Source.fromFile
 
 object WordChain {;import org.scalaide.worksheet.runtime.library.WorksheetSupport._; def main(args: Array[String])=$execute{;$skip(113); 
-  println("Welcome to the Scala worksheet");$skip(169); 
+  println("Welcome to the Scala worksheet");$skip(142); 
 
-  val dictionary = fromFile("C:\\Users\\sony\\Downloads\\Rahul\\Coding\\workspace\\ScalaProject\\words.dat").getLines().
+  val dictionary = fromFile("/home/indix/Search/Practice/ScalaProject/words.dat").getLines().
     map { x => x.trim().toLowerCase() }.toSet;System.out.println("""dictionary  : scala.collection.immutable.Set[String] = """ + $show(dictionary ));$skip(33); 
   val characterSet = 'a' to 'z';System.out.println("""characterSet  : scala.collection.immutable.NumericRange.Inclusive[Char] = """ + $show(characterSet ));$skip(203); ;
 
