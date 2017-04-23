@@ -26,13 +26,15 @@ object TautologyTemp {
     def calculate(): Boolean = false
   }
 
+
+	
   def parseString(str: String): Expression =
     {
       new BinaryExpression(new TrueTerm(), "&", new FalseTerm())
     }                                             //> parseString: (str: String)com.test.TautologyTemp.Expression
 
   val expr = parseString("")                      //> expr  : com.test.TautologyTemp.Expression = com.test.TautologyTemp$$anonfun$
-                                                  //| main$1$BinaryExpression$1@7f63425a
+                                                  //| main$1$BinaryExpression$1@1889f191
  
   expr.calculate()                                //> res0: Boolean = false
 }
