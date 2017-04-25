@@ -5,21 +5,21 @@ import sun.security.util.Length
 import scala.collection.mutable.HashSet
 
 object WordChainImproved {;import org.scalaide.worksheet.runtime.library.WorksheetSupport._; def main(args: Array[String])=$execute{;$skip(193); 
-  println("Welcome to the Scala worksheet");$skip(170); 
+  println("Welcome to the Scala worksheet");$skip(173); 
 
   val dictionary = fromFile("/home/indix/Search/Practice/ScalaProject/words.dat").getLines().
-    map { x => x.trim().toLowerCase() }.toSet.filter { x => x.length()==3};System.out.println("""dictionary  : scala.collection.immutable.Set[String] = """ + $show(dictionary ));$skip(518); 
+    map { x => x.trim().toLowerCase() }.toSet.filter { x => x.length() == 3 };System.out.println("""dictionary  : scala.collection.immutable.Set[String] = """ + $show(dictionary ));$skip(526); 
 
   def editDistance(src: String, srclen: Int, dest: String, destlen: Int): Int = {
-	
-		lazy val x = editDistance(src, srclen - 1, dest, destlen);
-		lazy val y = editDistance(src, srclen, dest, destlen-1);
-		lazy val z = editDistance(src, srclen - 1, dest, destlen-1);
+
+    lazy val x = editDistance(src, srclen - 1, dest, destlen);
+    lazy val y = editDistance(src, srclen, dest, destlen - 1);
+    lazy val z = editDistance(src, srclen - 1, dest, destlen - 1);
     if (srclen < 0 && destlen < 0) 0
     else if (srclen < 0) destlen + 1
     else if (destlen < 0) srclen + 1
     else
-      Math.min(Math.min(1 + x ,
+      Math.min(Math.min(1 + x,
         1 + y),
         if (src.charAt(srclen) == dest.charAt(destlen)) z
         else 1 + z)
@@ -30,31 +30,28 @@ object WordChainImproved {;import org.scalaide.worksheet.runtime.library.Workshe
     if (!srcword.equals(destword) && Math.abs(srcword.length() - destword.length()) == 0 && 1 == editDistance(srcword, srcword.length() - 1, destword, destword.length() - 1))
   } yield srcword -> destword;System.out.println("""wordsPair  : scala.collection.immutable.Set[(String, String)] = """ + $show(wordsPair ));$skip(54); 
 
-  val wordsPath = wordsPair.groupBy(p => p._1).toMap;System.out.println("""wordsPath  : scala.collection.immutable.Map[String,scala.collection.immutable.Set[(String, String)]] = """ + $show(wordsPath ));$skip(487); 
-//  val words = wordsPath.getOrElse("aa", Set(None))
+  val wordsPath = wordsPair.groupBy(p => p._1).toMap;System.out.println("""wordsPath  : scala.collection.immutable.Map[String,scala.collection.immutable.Set[(String, String)]] = """ + $show(wordsPath ));$skip(754); 
+  //  val words = wordsPath.getOrElse("aa", Set(None))
 
+  def checkYield(dest: String, discoveredwords: Set[String], outputdictionary: Map[String, String]): String = {
 
-  
-  def checkYield(discoveredwords: Set[String], outputdictionary: Map[String, String]): Map[String, String] = {
-    for {
-      (key, value) <- outputdictionary; (word1,chword) <- wordsPath.getOrElse(key, new HashSet[(String,String)])
-      
-      if (!discoveredwords.contains(chword) && dictionary.contains(chword))
-    } yield chword -> (outputdictionary(key) + ";" + chword) //println(word +"->" + changeWord(word,ch,i))
+    if (outputdictionary.isEmpty || outputdictionary.contains(dest)) outputdictionary.getOrElse(dest, "<NotFound>")
+    else {
+      val output = for {
+        (key, value) <- outputdictionary; (word1, chword) <- wordsPath.getOrElse(key, new HashSet[(String, String)])
 
-  };System.out.println("""checkYield: (discoveredwords: Set[String], outputdictionary: Map[String,String])Map[String,String]""");$skip(502); 
+        if (!discoveredwords.contains(chword) && dictionary.contains(chword))
+      } yield chword -> (outputdictionary(key) + ";" + chword) //println(word +"->" + changeWord(word,ch,i))
+      val newdiscoveredwords = discoveredwords union output.keySet
+      checkYield(dest, newdiscoveredwords, output)
+    }
+  };System.out.println("""checkYield: (dest: String, discoveredwords: Set[String], outputdictionary: Map[String,String])String""");$skip(238); 
 
   // val output = checkYield()
   def getPath(src: String, dest: String): String = {
     var outputdictionary = Map(src -> src)
     var discoveredwords = outputdictionary.keySet
-    var output = Map("test" -> "test");
-    do {
-      output = checkYield(discoveredwords, outputdictionary)
-      discoveredwords = discoveredwords union output.keySet
-      outputdictionary = output
-    } while (!output.isEmpty && !output.contains(dest))
-    if (output.contains(dest)) output(dest) else "<NotFound>"
+    checkYield(dest, discoveredwords, outputdictionary)
   };System.out.println("""getPath: (src: String, dest: String)String""");$skip(25); val res$0 = 
 
   getPath("cat", "dog");System.out.println("""res0: String = """ + $show(res$0));$skip(26); val res$1 = 
