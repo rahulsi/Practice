@@ -30,28 +30,28 @@ object WordChainImproved {;import org.scalaide.worksheet.runtime.library.Workshe
     if (!srcword.equals(destword) && Math.abs(srcword.length() - destword.length()) == 0 && 1 == editDistance(srcword, srcword.length() - 1, destword, destword.length() - 1))
   } yield srcword -> destword;System.out.println("""wordsPair  : scala.collection.immutable.Set[(String, String)] = """ + $show(wordsPair ));$skip(54); 
 
-  val wordsPath = wordsPair.groupBy(p => p._1).toMap;System.out.println("""wordsPath  : scala.collection.immutable.Map[String,scala.collection.immutable.Set[(String, String)]] = """ + $show(wordsPath ));$skip(754); 
+  val wordsPath = wordsPair.groupBy(p => p._1).toMap;System.out.println("""wordsPath  : scala.collection.immutable.Map[String,scala.collection.immutable.Set[(String, String)]] = """ + $show(wordsPath ));$skip(785); 
   //  val words = wordsPath.getOrElse("aa", Set(None))
 
-  def checkYield(dest: String, discoveredwords: Set[String], outputdictionary: Map[String, String]): String = {
+  def BFS(dest: String, discoveredwords: Set[String], currentLevel: Map[String, String]): String = {
 
-    if (outputdictionary.isEmpty || outputdictionary.contains(dest)) outputdictionary.getOrElse(dest, "<NotFound>")
+    if (currentLevel.isEmpty || currentLevel.contains(dest)) currentLevel.getOrElse(dest, "<NotFound>") // base condition
     else {
-      val output = for {
-        (key, value) <- outputdictionary; (word1, chword) <- wordsPath.getOrElse(key, new HashSet[(String, String)])
+      val nextLevel = for {
+        (key, value) <- currentLevel; (word1, chword) <- wordsPath.getOrElse(key, new HashSet[(String, String)])  //visit this level
 
         if (!discoveredwords.contains(chword) && dictionary.contains(chword))
-      } yield chword -> (outputdictionary(key) + ";" + chword) //println(word +"->" + changeWord(word,ch,i))
-      val newdiscoveredwords = discoveredwords union output.keySet
-      checkYield(dest, newdiscoveredwords, output)
+      } yield chword -> (currentLevel(key) + ";" + chword) //println(word +"->" + changeWord(word,ch,i))
+      val newdiscoveredwords = discoveredwords union nextLevel.keySet
+      BFS(dest, newdiscoveredwords, nextLevel) 		//go the next level
     }
-  };System.out.println("""checkYield: (dest: String, discoveredwords: Set[String], outputdictionary: Map[String,String])String""");$skip(238); 
+  };System.out.println("""BFS: (dest: String, discoveredwords: Set[String], currentLevel: Map[String,String])String""");$skip(219); 
 
   // val output = checkYield()
   def getPath(src: String, dest: String): String = {
-    var outputdictionary = Map(src -> src)
-    var discoveredwords = outputdictionary.keySet
-    checkYield(dest, discoveredwords, outputdictionary)
+    var currentLevel = Map(src -> src)
+    var discoveredwords = currentLevel.keySet
+    BFS(dest, discoveredwords, currentLevel)
   };System.out.println("""getPath: (src: String, dest: String)String""");$skip(25); val res$0 = 
 
   getPath("cat", "dog");System.out.println("""res0: String = """ + $show(res$0));$skip(26); val res$1 = 
