@@ -11,22 +11,21 @@ object Tautology {
 
   class BinaryOrExpression(expr1: Expression, expr2: Expression) extends Expression {
     def calculate(valMap: Map[String, Boolean]): Boolean = {
-      expr1.calculate(valMap) | expr2.calculate(valMap)
+      expr1.calculate(valMap) || expr2.calculate(valMap)
     }
     override def toString(): String = "(" + expr1.toString() + "|" + expr2.toString() + ")"
   }
 
   class BinaryAndExpression(expr1: Expression, expr2: Expression) extends Expression {
     def calculate(valMap: Map[String, Boolean]): Boolean = {
-      expr1.calculate(valMap) & expr2.calculate(valMap)
+      expr1.calculate(valMap) && expr2.calculate(valMap) // use logical so that it is efficient
     }
     override def toString(): String = "(" + expr1.toString() + "&" + expr2.toString() + ")"
   }
 
   class UrinaryExpression(expr: Expression) extends Expression {
     def calculate(valMap: Map[String, Boolean]): Boolean = {
-      if (expr.calculate(valMap) == true) false
-      else true
+      !expr.calculate(valMap)
     }
     override def toString(): String = "!" + expr.toString()
   }
@@ -130,13 +129,14 @@ defcalculate(valMap:Map[String,Boolean]):Boolean=false
   }                                               //> isTautology: (exp: com.test.Tautology.Expression, eleSet: Set[String])Boole
                                                   //| an
 
+  //TODO : avoid multiple return
   val input = Array("(a|((b|c)|(!d)))", "(!a | (a & a))", "(!a | (b & !a))", "(!a | a)", "((a & (!b | b)) | (!a & (!b | b)))")
                                                   //> input  : Array[String] = Array((a|((b|c)|(!d))), (!a | (a & a)), (!a | (b &
                                                   //|  !a)), (!a | a), ((a & (!b | b)) | (!a & (!b | b))))
 
   for (spacestr <- input) {
     val str = spacestr.replaceAll(" ", "");
-    val exp = parseString(str, 0, str.length() - 1)
+    val exp = parseString(str, 0, str.length() - 1) //TODO function name should be more appropriate
     val eleSet = str.split(Array('(', ')', '&', '|', '!')).filter { x => x.trim().length() > 0 }.toSet
     println("output=" + str + " " + isTautology(exp, eleSet))
   }                                               //> output=(a|((b|c)|(!d))) false

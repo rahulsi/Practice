@@ -11,22 +11,21 @@ object Tautology {;import org.scalaide.worksheet.runtime.library.WorksheetSuppor
 
   class BinaryOrExpression(expr1: Expression, expr2: Expression) extends Expression {
     def calculate(valMap: Map[String, Boolean]): Boolean = {
-      expr1.calculate(valMap) | expr2.calculate(valMap)
+      expr1.calculate(valMap) || expr2.calculate(valMap)
     }
     override def toString(): String = "(" + expr1.toString() + "|" + expr2.toString() + ")"
   }
 
   class BinaryAndExpression(expr1: Expression, expr2: Expression) extends Expression {
     def calculate(valMap: Map[String, Boolean]): Boolean = {
-      expr1.calculate(valMap) & expr2.calculate(valMap)
+      expr1.calculate(valMap) && expr2.calculate(valMap) // use logical so that it is efficient
     }
     override def toString(): String = "(" + expr1.toString() + "&" + expr2.toString() + ")"
   }
 
   class UrinaryExpression(expr: Expression) extends Expression {
     def calculate(valMap: Map[String, Boolean]): Boolean = {
-      if (expr.calculate(valMap) == true) false
-      else true
+      !expr.calculate(valMap)
     }
     override def toString(): String = "!" + expr.toString()
   }
@@ -37,7 +36,7 @@ object Tautology {;import org.scalaide.worksheet.runtime.library.WorksheetSuppor
       valMap.getOrElse(str, false)
     }
     override def toString(): String = str
-  };$skip(3285); 
+  };$skip(3292); 
 
   /*
 classTrueTermextendsExpression{
@@ -126,13 +125,14 @@ defcalculate(valMap:Map[String,Boolean]):Boolean=false
       if (exp.calculate(valMap) == false) return false
     }
     return true
-  };System.out.println("""isTautology: (exp: com.test.Tautology.Expression, eleSet: Set[String])Boolean""");$skip(129); 
+  };System.out.println("""isTautology: (exp: com.test.Tautology.Expression, eleSet: Set[String])Boolean""");$skip(162); 
 
-  val input = Array("(a|((b|c)|(!d)))", "(!a | (a & a))", "(!a | (b & !a))", "(!a | a)", "((a & (!b | b)) | (!a & (!b | b)))");System.out.println("""input  : Array[String] = """ + $show(input ));$skip(295); 
+  //TODO : avoid multiple return
+  val input = Array("(a|((b|c)|(!d)))", "(!a | (a & a))", "(!a | (b & !a))", "(!a | a)", "((a & (!b | b)) | (!a & (!b | b)))");System.out.println("""input  : Array[String] = """ + $show(input ));$skip(343); 
 
   for (spacestr <- input) {
     val str = spacestr.replaceAll(" ", "");
-    val exp = parseString(str, 0, str.length() - 1)
+    val exp = parseString(str, 0, str.length() - 1) //TODO function name should be more appropriate
     val eleSet = str.split(Array('(', ')', '&', '|', '!')).filter { x => x.trim().length() > 0 }.toSet
     println("output=" + str + " " + isTautology(exp, eleSet))
   }}
