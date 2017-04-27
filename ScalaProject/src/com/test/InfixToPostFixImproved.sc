@@ -3,7 +3,7 @@ package com.test
 import java.util.Stack
 
 object InfixToPostFixImproved {
-  println("Welcome to the Scala worksheet")
+  println("Welcome to the Scala worksheet")       //> Welcome to the Scala worksheet
 
   case class Operator(ch: Char, rank: Int) {
     override def toString: String = ch.toString()
@@ -22,19 +22,20 @@ object InfixToPostFixImproved {
       case ')' => Operator(')', 90)
       case _ => Operator(';', 100) //Not operator
     }
-  }
+  }                                               //> getOperator: (ch: Char)com.test.InfixToPostFixImproved.Operator
 
   def hashighPrecedence(ch: Operator, op: Operator): Boolean = {
 
     if (ch.rank - op.rank >= 0) true
     else false
 
-  }
+  }                                               //> hashighPrecedence: (ch: com.test.InfixToPostFixImproved.Operator, op: com.te
+                                                  //| st.InfixToPostFixImproved.Operator)Boolean
 
   def isOperand(ch: Char): Boolean = {
     if (getOperator(ch).ch == ';') true
     else false
-  }
+  }                                               //> isOperand: (ch: Char)Boolean
 
   def infixToPostFix(input: String): String = {
 
@@ -63,14 +64,14 @@ object InfixToPostFixImproved {
     }
     while (!stack.isEmpty()) output += stack.pop()
     output
-  }
+  }                                               //> infixToPostFix: (input: String)String
 
   def evalPostFix(input: String, map: Map[String, Boolean]): Boolean = {
     var stack: Stack[Boolean] = new Stack()
     for (ch <- input) {
       if (ch == '!') { val v1 = stack.pop(); stack.push(!v1); /* println(ch + " -> !" + v1 + " = " + (!v1)) */ }
-      else if (ch == '|') { val v1 = stack.pop(); val v2 = stack.pop(); stack.push(v1 || v2); /*println(ch + " -> " + v1 + "|" + v2 + "=" + (v1 || v2)) */ }
-      else if (ch == '&') { val v1 = stack.pop(); val v2 = stack.pop(); stack.push(v1 && v2); /*println(ch + " -> " + v1 + "&" + v2 + "=" + (v1 && v2))*/ }
+      else if (ch == '|') { val v1 = stack.pop(); val v2 = stack.pop(); stack.push(v1 || v2); /* println(ch + " -> " + v1 + "|" + v2 + "=" + (v1 || v2))*/ }
+      else if (ch == '&') { val v1 = stack.pop(); val v2 = stack.pop(); stack.push(v1 && v2); /*println(ch + " -> " + v1 + "&" + v2 + "=" + (v1 && v2)) */ }
       else {
         //println(ch + "->" + map.getOrElse(ch.toString(), false))
         stack.push(map.getOrElse(ch.toString(), false))
@@ -78,8 +79,8 @@ object InfixToPostFixImproved {
     }
     val output = stack.pop()
     if (stack.isEmpty()) output
-    else throw (new Exception("faied to evaluate  expression :" + input))
-  }
+    else { println(stack); throw (new Exception("faied to evaluate  expression :" + input)) }
+  }                                               //> evalPostFix: (input: String, map: Map[String,Boolean])Boolean
   //infixToPostFix("a+b*c-d")
   //infixToPostFix("a*b+c*d")
   //infixToPostFix("(a+b)*(c-d)")
@@ -90,31 +91,47 @@ object InfixToPostFixImproved {
   //infixToPostFix("(!a | a)".replaceAll("\\s+", "").trim())
   //infixToPostFix("((a & (!b | b)) | (!a & (!b | b)))".replaceAll("\\s+", "").trim())
 
-  def isTautology(exp: String, eleSet: Set[String]): Boolean = {
-    for (x <- 0 to Math.pow(2, eleSet.size).toInt - 1) {
-      var valMap: Map[String, Boolean] = Map()
-      var value: Boolean = false
-      var count = 0
-      for (ele <- eleSet) {
-        value = if ((x & 1 << count) == 0) false else true
-        valMap += (ele -> value)
-        count += 1
-      }
-      //println(valMap)
-      //println(exp + " ----> " + evalPostFix(exp, valMap))
-      if (evalPostFix(exp, valMap) == false) return false
+  def generateValueMap(x: Int, eleSet: Set[String]): Map[String, Boolean] = {
+
+    var valMap: Map[String, Boolean] = Map()
+    var value: Boolean = false
+    var count = 0
+    for (ele <- eleSet) {
+      value = if ((x & 1 << count) == 0) false else true
+      valMap += (ele -> value)
+      count += 1
     }
-    return true
-  }
+    valMap
+  }                                               //> generateValueMap: (x: Int, eleSet: Set[String])Map[String,Boolean]
+
+  def isTautology(input: String, eleSet: Set[String], n: Int): Boolean = {
+    if (n == -1) true
+    else if (evalPostFix(input, generateValueMap(n, eleSet)) == false) false
+    else isTautology(input, eleSet, n - 1)
+  }                                               //> isTautology: (input: String, eleSet: Set[String], n: Int)Boolean
+
+  def isTautologyImpr(input: String): Boolean = {
+    //    println("input=" + input)
+    val str = input.replaceAll(" ", "");
+    //    println("infix=" + str)
+    val exp = infixToPostFix(str)
+    //    println("postfix=" + exp)
+    val eleSet = str.split(Array('(', ')', '&', '|', '!')).filter { x => x.trim().length() > 0 }.toSet
+    val n = Math.pow(2, eleSet.size).toInt - 1;
+
+    isTautology(exp, eleSet, n)
+  }                                               //> isTautologyImpr: (input: String)Boolean
+
   val input = Array("(a|((b|c)|(!d)))", "(!a | (a & a))", "(!a | (b & !a))", "(!a | a)", "((a & (!b | b)) | (!a & (!b | b)))")
+                                                  //> input  : Array[String] = Array((a|((b|c)|(!d))), (!a | (a & a)), (!a | (b &
+                                                  //|  !a)), (!a | a), ((a & (!b | b)) | (!a & (!b | b))))
   //val input = Array("(a|!a)")
   for (spacestr <- input) {
-    println("input=" + spacestr)
-    val str = spacestr.replaceAll(" ", "");
-    println("infix=" + str)
-    val exp = infixToPostFix(str)
-    println("postfix=" + exp)
-    val eleSet = str.split(Array('(', ')', '&', '|', '!')).filter { x => x.trim().length() > 0 }.toSet
-    println("output=" + isTautology(exp, eleSet))
+    println(spacestr + "=" + isTautologyImpr(spacestr))
+                                                  //> (a|((b|c)|(!d)))=false
+                                                  //| (!a | (a & a))=true
+                                                  //| (!a | (b & !a))=false
+                                                  //| (!a | a)=true
+                                                  //| ((a & (!b | b)) | (!a & (!b | b)))=true
   }
 }

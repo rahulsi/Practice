@@ -63,14 +63,14 @@ object InfixToPostFixImproved {;import org.scalaide.worksheet.runtime.library.Wo
     }
     while (!stack.isEmpty()) output += stack.pop()
     output
-  };System.out.println("""infixToPostFix: (input: String)String""");$skip(857); 
+  };System.out.println("""infixToPostFix: (input: String)String""");$skip(878); 
 
   def evalPostFix(input: String, map: Map[String, Boolean]): Boolean = {
     var stack: Stack[Boolean] = new Stack()
     for (ch <- input) {
       if (ch == '!') { val v1 = stack.pop(); stack.push(!v1); /* println(ch + " -> !" + v1 + " = " + (!v1)) */ }
-      else if (ch == '|') { val v1 = stack.pop(); val v2 = stack.pop(); stack.push(v1 || v2); /*println(ch + " -> " + v1 + "|" + v2 + "=" + (v1 || v2)) */ }
-      else if (ch == '&') { val v1 = stack.pop(); val v2 = stack.pop(); stack.push(v1 && v2); /*println(ch + " -> " + v1 + "&" + v2 + "=" + (v1 && v2))*/ }
+      else if (ch == '|') { val v1 = stack.pop(); val v2 = stack.pop(); stack.push(v1 || v2); /* println(ch + " -> " + v1 + "|" + v2 + "=" + (v1 || v2))*/ }
+      else if (ch == '&') { val v1 = stack.pop(); val v2 = stack.pop(); stack.push(v1 && v2); /*println(ch + " -> " + v1 + "&" + v2 + "=" + (v1 && v2)) */ }
       else {
         //println(ch + "->" + map.getOrElse(ch.toString(), false))
         stack.push(map.getOrElse(ch.toString(), false))
@@ -78,8 +78,8 @@ object InfixToPostFixImproved {;import org.scalaide.worksheet.runtime.library.Wo
     }
     val output = stack.pop()
     if (stack.isEmpty()) output
-    else throw (new Exception("faied to evaluate  expression :" + input))
-  };System.out.println("""evalPostFix: (input: String, map: Map[String,Boolean])Boolean""");$skip(948); 
+    else { println(stack); throw (new Exception("faied to evaluate  expression :" + input)) }
+  };System.out.println("""evalPostFix: (input: String, map: Map[String,Boolean])Boolean""");$skip(736); 
   //infixToPostFix("a+b*c-d")
   //infixToPostFix("a*b+c*d")
   //infixToPostFix("(a+b)*(c-d)")
@@ -90,31 +90,40 @@ object InfixToPostFixImproved {;import org.scalaide.worksheet.runtime.library.Wo
   //infixToPostFix("(!a | a)".replaceAll("\\s+", "").trim())
   //infixToPostFix("((a & (!b | b)) | (!a & (!b | b)))".replaceAll("\\s+", "").trim())
 
-  def isTautology(exp: String, eleSet: Set[String]): Boolean = {
-    for (x <- 0 to Math.pow(2, eleSet.size).toInt - 1) {
-      var valMap: Map[String, Boolean] = Map()
-      var value: Boolean = false
-      var count = 0
-      for (ele <- eleSet) {
-        value = if ((x & 1 << count) == 0) false else true
-        valMap += (ele -> value)
-        count += 1
-      }
-      //println(valMap)
-      //println(exp + " ----> " + evalPostFix(exp, valMap))
-      if (evalPostFix(exp, valMap) == false) return false
+  def generateValueMap(x: Int, eleSet: Set[String]): Map[String, Boolean] = {
+
+    var valMap: Map[String, Boolean] = Map()
+    var value: Boolean = false
+    var count = 0
+    for (ele <- eleSet) {
+      value = if ((x & 1 << count) == 0) false else true
+      valMap += (ele -> value)
+      count += 1
     }
-    return true
-  };System.out.println("""isTautology: (exp: String, eleSet: Set[String])Boolean""");$skip(127); 
-  val input = Array("(a|((b|c)|(!d)))", "(!a | (a & a))", "(!a | (b & !a))", "(!a | a)", "((a & (!b | b)) | (!a & (!b | b)))");System.out.println("""input  : Array[String] = """ + $show(input ));$skip(386); 
+    valMap
+  };System.out.println("""generateValueMap: (x: Int, eleSet: Set[String])Map[String,Boolean]""");$skip(222); 
+
+  def isTautology(input: String, eleSet: Set[String], n: Int): Boolean = {
+    if (n == -1) true
+    else if (evalPostFix(input, generateValueMap(n, eleSet)) == false) false
+    else isTautology(input, eleSet, n - 1)
+  };System.out.println("""isTautology: (input: String, eleSet: Set[String], n: Int)Boolean""");$skip(420); 
+
+  def isTautologyImpr(input: String): Boolean = {
+    //    println("input=" + input)
+    val str = input.replaceAll(" ", "");
+    //    println("infix=" + str)
+    val exp = infixToPostFix(str)
+    //    println("postfix=" + exp)
+    val eleSet = str.split(Array('(', ')', '&', '|', '!')).filter { x => x.trim().length() > 0 }.toSet
+    val n = Math.pow(2, eleSet.size).toInt - 1;
+
+    isTautology(exp, eleSet, n)
+  };System.out.println("""isTautologyImpr: (input: String)Boolean""");$skip(128); 
+
+  val input = Array("(a|((b|c)|(!d)))", "(!a | (a & a))", "(!a | (b & !a))", "(!a | a)", "((a & (!b | b)) | (!a & (!b | b)))");System.out.println("""input  : Array[String] = """ + $show(input ));$skip(116); 
   //val input = Array("(a|!a)")
   for (spacestr <- input) {
-    println("input=" + spacestr)
-    val str = spacestr.replaceAll(" ", "");
-    println("infix=" + str)
-    val exp = infixToPostFix(str)
-    println("postfix=" + exp)
-    val eleSet = str.split(Array('(', ')', '&', '|', '!')).filter { x => x.trim().length() > 0 }.toSet
-    println("output=" + isTautology(exp, eleSet))
-  }}
+    println(spacestr + "=" + isTautologyImpr(spacestr))}
+  }
 }
