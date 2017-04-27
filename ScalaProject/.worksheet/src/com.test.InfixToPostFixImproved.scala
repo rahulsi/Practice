@@ -7,7 +7,7 @@ object InfixToPostFixImproved {;import org.scalaide.worksheet.runtime.library.Wo
 
   case class Operator(ch: Char, rank: Int) {
     override def toString: String = ch.toString()
-  };$skip(540); 
+  };$skip(539); 
 
   def getOperator(ch: Char): Operator = {
     ch match {
@@ -20,7 +20,7 @@ object InfixToPostFixImproved {;import org.scalaide.worksheet.runtime.library.Wo
       case '|' => Operator('|', 20)
       case '(' => Operator('(', 90)
       case ')' => Operator(')', 90)
-      case _ => Operator(';', 100)  //Not operator
+      case _ => Operator(';', 100) //Not operator
     }
   };System.out.println("""getOperator: (ch: Char)com.test.InfixToPostFixImproved.Operator""");$skip(124); 
 
@@ -63,11 +63,58 @@ object InfixToPostFixImproved {;import org.scalaide.worksheet.runtime.library.Wo
     }
     while (!stack.isEmpty()) output += stack.pop()
     output
-  };System.out.println("""infixToPostFix: (input: String)String""");$skip(29); val res$0 = 
+  };System.out.println("""infixToPostFix: (input: String)String""");$skip(857); 
 
-  infixToPostFix("a+b*c-d");System.out.println("""res0: String = """ + $show(res$0));$skip(28); val res$1 = 
-  infixToPostFix("a*b+c*d");System.out.println("""res1: String = """ + $show(res$1));$skip(32); val res$2 = 
-  infixToPostFix("(a+b)*(c-d)");System.out.println("""res2: String = """ + $show(res$2));$skip(30); val res$3 = 
-  infixToPostFix("a*(b+c)+d");System.out.println("""res3: String = """ + $show(res$3))}
+  def evalPostFix(input: String, map: Map[String, Boolean]): Boolean = {
+    var stack: Stack[Boolean] = new Stack()
+    for (ch <- input) {
+      if (ch == '!') { val v1 = stack.pop(); stack.push(!v1); /* println(ch + " -> !" + v1 + " = " + (!v1)) */ }
+      else if (ch == '|') { val v1 = stack.pop(); val v2 = stack.pop(); stack.push(v1 || v2); /*println(ch + " -> " + v1 + "|" + v2 + "=" + (v1 || v2)) */ }
+      else if (ch == '&') { val v1 = stack.pop(); val v2 = stack.pop(); stack.push(v1 && v2); /*println(ch + " -> " + v1 + "&" + v2 + "=" + (v1 && v2))*/ }
+      else {
+        //println(ch + "->" + map.getOrElse(ch.toString(), false))
+        stack.push(map.getOrElse(ch.toString(), false))
+      }
+    }
+    val output = stack.pop()
+    if (stack.isEmpty()) output
+    else throw (new Exception("faied to evaluate  expression :" + input))
+  };System.out.println("""evalPostFix: (input: String, map: Map[String,Boolean])Boolean""");$skip(948); 
+  //infixToPostFix("a+b*c-d")
+  //infixToPostFix("a*b+c*d")
+  //infixToPostFix("(a+b)*(c-d)")
+  //infixToPostFix("a*(b+c)+d")
 
+  //infixToPostFix("(!a | (a & a))".replaceAll("\\s+", "").trim())
+  //infixToPostFix("(!a | (b & !a))".replaceAll("\\s+", "").trim())
+  //infixToPostFix("(!a | a)".replaceAll("\\s+", "").trim())
+  //infixToPostFix("((a & (!b | b)) | (!a & (!b | b)))".replaceAll("\\s+", "").trim())
+
+  def isTautology(exp: String, eleSet: Set[String]): Boolean = {
+    for (x <- 0 to Math.pow(2, eleSet.size).toInt - 1) {
+      var valMap: Map[String, Boolean] = Map()
+      var value: Boolean = false
+      var count = 0
+      for (ele <- eleSet) {
+        value = if ((x & 1 << count) == 0) false else true
+        valMap += (ele -> value)
+        count += 1
+      }
+      //println(valMap)
+      //println(exp + " ----> " + evalPostFix(exp, valMap))
+      if (evalPostFix(exp, valMap) == false) return false
+    }
+    return true
+  };System.out.println("""isTautology: (exp: String, eleSet: Set[String])Boolean""");$skip(127); 
+  val input = Array("(a|((b|c)|(!d)))", "(!a | (a & a))", "(!a | (b & !a))", "(!a | a)", "((a & (!b | b)) | (!a & (!b | b)))");System.out.println("""input  : Array[String] = """ + $show(input ));$skip(386); 
+  //val input = Array("(a|!a)")
+  for (spacestr <- input) {
+    println("input=" + spacestr)
+    val str = spacestr.replaceAll(" ", "");
+    println("infix=" + str)
+    val exp = infixToPostFix(str)
+    println("postfix=" + exp)
+    val eleSet = str.split(Array('(', ')', '&', '|', '!')).filter { x => x.trim().length() > 0 }.toSet
+    println("output=" + isTautology(exp, eleSet))
+  }}
 }
