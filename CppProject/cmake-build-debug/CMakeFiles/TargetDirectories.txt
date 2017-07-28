@@ -1,0 +1,3 @@
+/home/indix/Search/Practice/CppProject/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/indix/Search/Practice/CppProject/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/indix/Search/Practice/CppProject/cmake-build-debug/CMakeFiles/CppProject.dir
