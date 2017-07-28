@@ -5,7 +5,6 @@ import org.w3c.dom.ranges.Range
 object HelloScala {
   println("Welcome to the Scala worksheet")       //> Welcome to the Scala worksheet
 
-  
   def lastElement[T](list: List[T]): Option[T] = {
     list match {
       case Nil => None
@@ -207,8 +206,6 @@ object HelloScala {
                                                   //| 95, 96, 97, 98, 99)
                                                   //| res41: Int = 2318
 
-	
-
   def CountWays(sizex: Int, sizey: Int): Int = {
 
     def count(x: Int, y: Int): Int = {
@@ -218,10 +215,10 @@ object HelloScala {
       else if (y == sizey) count(x + 1, y)
       else count(x + 1, y) + count(x, y + 1)
     }
-    if(sizex>0 && sizey>0) count(0,0)
+    if (sizex > 0 && sizey > 0) count(0, 0)
     else 0
   }                                               //> CountWays: (sizex: Int, sizey: Int)Int
-	
-		CountWays(4, 4);                  //> res42: Int = 70
+
+  CountWays(4, 4);                                //> res42: Int = 70
 
 }
