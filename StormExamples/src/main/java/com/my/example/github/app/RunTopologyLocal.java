@@ -12,7 +12,7 @@ public class RunTopologyLocal {
 
 
         Config config = new Config();
-        config.setDebug(true);
+        config.setDebug(false);
 
         LocalCluster lc = new LocalCluster();
         lc.submitTopology("Github-Analyzer",config, AppTopologyBuilder.prepare().createTopology());
